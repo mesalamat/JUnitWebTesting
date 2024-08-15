@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUnit Webtesting</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/clike/clike.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+        }
+
+        #editor-container {
+            width: 60%;
+            margin-right: 20px;
+        }
+
+        #console-container {
+            width: 40%;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        #console-log {
+            white-space: pre-wrap; /* Preserve whitespace and line breaks */
+        }
+
+        #submit-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .CodeMirror {
+            height: 800px; /* Adjust this value to increase/decrease height */
+        }
+
+        #submit-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<div id="editor-container">
+    <textarea id="code-editor">
+// Example JUnit Test Code code
+        import static org.junit.jupiter.api.Assertions.*;
+        import org.junit.jupiter.api.*;
+		import lombok.Data;
+
+        public class CalculateTest {
+
+
+
+        @Test
+		@DisplayName("Test Palindrome")
+        public void testPalindrome() {
+            assertEquals("aba", reverse("aba"));
+            assertTrue(isStringPalindromic("ababa"));
+        }
+
+		@Test
+		@DisplayName("Test Bank Account Instance")
+		public void testMultiplication() {
+            BankAccount bankAccount = new BankAccount(500);
+            assertTrue(bankAccount.getCurrentBalance() == 500);
+		}
+
+        public boolean isStringPalindromic(String s){
+            return reverse(s).equalsIgnoreCase(s);
+        }
+
+        public String reverse(String s) {
+            return new StringBuffer(s).reverse().toString();
+        }
+
+        }
+
+
+		//Dummy BankAccount Class
+		@Data
+		class BankAccount {
+
+		  private int currentBalance;
+		  private int minBalance = 0;
+
+		  public BankAccount(int currentBalance){
+			this.currentBalance = currentBalance;
+		  }
+		}
+
+    </textarea>
+    <button id="submit-button">Submit Code</button>
+</div>
+
+<div id="console-container">
+    <h3>Console Log</h3>
+    <div id="console-log"></div>
+</div>
+
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
+        lineNumbers: true,
+        mode: "text/x-java",
+        indentWithTabs: true,
+        smartIndent: true,
+        lineWrapping: true,
+        matchBrackets: true,
+        autocorrect: true,
+        autofocus: true,
+        theme: "monokai"
+    });
+
+    function logToConsole(message) {
+        var consoleLog = document.getElementById("console-log");
+        consoleLog.textContent += message + "\n";
+    }
+
+    //Used for clearing the console right before execution!
+    function clearConsole(){
+        var consoleLog = document.getElementById("console-log");
+        consoleLog.textContent = "Waiting for execution... \n";
+    }
+
+    // Example of using the log function
+    logToConsole("Waiting for submission.");
+    document.getElementById("submit-button").addEventListener("click", function () {
+        // Get the content of the editor
+        var codeContent = editor.getValue();
+        clearConsole();
+        // POST the code content to the specified URL
+        fetch("http://localhost:8080/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "text/plain"
+            },
+            body: codeContent
+        })
+            .then(data => data.text())
+            .then(data => {
+                logToConsole(data);
+            })
+            .catch(error => {
+                logToConsole("Error: " + error);
+            });
+    });
+</script>
+
+</body>
+</html>
