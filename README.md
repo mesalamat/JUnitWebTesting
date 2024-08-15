@@ -1,6 +1,7 @@
 # JUnit Webtesting
 
-Spring Application that allows execution of JUnit Tests at Runtime by writing code in a Web-based Editor.
+Proof of Concept Spring Application that allows execution of JUnit Tests at Runtime by writing code in a Web-based Editor.
+
 
 
 ## Usage
@@ -21,3 +22,8 @@ Furthermore it prints out whether the Test was successful or not, or whether Com
 - Spring Boot 
 - Thymeleaf 
 - Lombok
+
+
+## Expansions
+
+From here on with tweaks and modifications one could turn it into a Leetcode-esque Platform, also through JUnit's Annotations with parameterised Testing and so on.
