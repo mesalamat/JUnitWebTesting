@@ -19,6 +19,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
@@ -94,23 +95,20 @@ public class TestExecutor {
         return failureString.toString();
     }
 
-    @SneakyThrows
+
     private void cleanUp(URLClassLoader classLoader) {
-        Arrays.stream(classLoader.getURLs()).forEach(url -> {
-            try {
-                //We gotta list all files & delete all of them as the Compiler unnests Nested Classes & puts them in their own File
-                Files.list(Path.of(url.toURI())).forEach(p -> {
-                    try {
-                        Files.delete(p);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-            } catch (URISyntaxException | IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        classLoader.close();
+        try(Stream<Path> paths = Files.list(Path.of(TestExecutor.COMPILE_DIR.toURI()))){
+            paths.forEach(path -> {
+                try {
+                    Files.delete(path);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            classLoader.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     private String formatDiagnostics(DiagnosticCollector<JavaFileObject> diagnostics) {
