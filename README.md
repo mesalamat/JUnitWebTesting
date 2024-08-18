@@ -15,7 +15,7 @@ Furthermore it prints out whether the Test was successful or not, or whether Com
 
 ## Used Libraries
 
-- JUnit, 
+- JUnit
 - Spring Boot 
 - Thymeleaf 
 - Lombok
